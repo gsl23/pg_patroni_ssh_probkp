@@ -1,7 +1,5 @@
 # pg_partoni_ssh_prbkp
 
-requirements: Docker and docker-compose. Testen on version 
-
 build_full.sh - full from zero setup and start
 
 build_patr_only.sh - rebuild patroni cluster
