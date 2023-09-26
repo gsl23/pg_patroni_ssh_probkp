@@ -1,0 +1,70 @@
+scope: cluster_1
+
+restapi:
+    listen: 0.0.0.0:8008 
+#    connect_address: 0.0.0.0:8008
+
+bootstrap:
+    dcs:
+        ttl: 130
+        loop_wait: 10
+        retry_timeout: 60
+        maximum_lag_on_failover: 1048576
+        postgresql:
+            use_pg_rewind: true
+            parameters:
+                max_connections: 1000
+                max_locks_per_transaction: 512
+                max_worker_processes: 27
+                wal_level: hot_standby
+                hot_standby: "on"
+                wal_keep_segments: 8
+                max_wal_senders: 10
+                max_replication_slots: 5
+                wal_log_hints: "on"
+                archive_mode: "on"
+                archive_command: "mkdir -p ./wal_archive && test ! -f ./wal_archive/%f && cp %p ./wal_archive/%f"
+
+    initdb:
+    - encoding: UTF8
+    - data-checksums
+
+
+    users:
+        admin:
+            password: admin
+            options:
+                - createrole
+                - createdb
+
+
+postgresql:
+    listen: 0.0.0.0:5432
+#    connect_address: 0.0.0.0:5432
+#    config_dir: /config
+#    data_dir: /var/lib/postgresql/data
+    pg_hba:
+        - host replication replicator 127.0.0.1/32 md5
+        - host replication replicator 172.18.0.2/32 md5
+        - host replication replicator 172.18.0.3/32 md5
+        - local all all trust
+        - host all all 0.0.0.0/0 md5
+    authentication:
+        replication:
+            username: replicator
+            password: replicator
+        superuser:
+            username: postgres
+            password: supersecret
+    parameters: 
+        log_destination: 'stderr'
+        logging_collector: on 
+        log_directory: 'log'
+        log_filename: 'postgresql-%Y-%m-%d_%H%M%S.log' 
+        archive_mode: "on"
+        archive_command: "mkdir -p ./wal_archive && test ! -f ./wal_archive/%f && cp %p ./wal_archive/%f"
+tags:
+    nofailover: false
+    noloadbalance: false
+    clonefrom: false
+    nosync: false

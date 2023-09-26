@@ -1,0 +1,57 @@
+networks:
+  postgres-backend:
+    external: true
+
+volumes:
+  pgdata:
+     external: true
+
+services:
+
+  patroni1:
+    image: patroni:pg14
+    hostname: patroni1
+    networks:
+      postgres-backend:
+        ipv4_address: 172.18.0.2
+    ports:
+      - "8009:8008"
+      - "6433:5432"
+      - "2222:22"
+    user: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      TZ: Asia/Tashkent
+      PATRONI_NAME: member_1
+      PATRONI_POSTGRESQL_DATA_DIR: /var/lib/postgresql/data/pgdata_n1
+#      PATRONI_POSTGRESQL_CONFIG_DIR: /var/lib/postgresql/data/pgdata_n1
+      PATRONI_CONSUL_HOST: http://172.18.0.10:8500
+      PATRONI_CONSUL_URL: http://172.18.0.10:8500/v1/
+      PATRONI_POSTGRESQL_BIN_DIR: /usr/local/bin
+      PATRONI_POSTGRESQL_CONNECT_ADDRESS: 172.18.0.2:5432
+      PATRONI_RESTAPI_CONNECT_ADDRESS: 172.18.0.2:8008
+    restart: unless-stopped
+    
+  patroni2:
+    image: patroni:pg14
+    hostname: patroni2
+    networks:
+      postgres-backend:
+        ipv4_address: 172.18.0.3
+    ports:
+      - "8010:8008"
+      - "6432:5432"
+    user: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      TZ: Asia/Tashkent
+      PATRONI_NAME: member_2
+      PATRONI_POSTGRESQL_DATA_DIR: /var/lib/postgresql/data/pgdata_n2
+      PATRONI_CONSUL_HOST: http://172.18.0.10:8500
+      PATRONI_CONSUL_URL: http://172.18.0.10:8500/v1/
+      PATRONI_POSTGRESQL_BIN_DIR: /usr/local/bin
+      PATRONI_POSTGRESQL_CONNECT_ADDRESS: 172.18.0.3:5432
+      PATRONI_RESTAPI_CONNECT_ADDRESS: 172.18.0.3:8008
+    restart: unless-stopped

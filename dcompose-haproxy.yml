@@ -1,0 +1,17 @@
+networks:
+  postgres-backend:
+    external: true
+
+services:
+  haproxy:
+    image: haproxy:2.8.3-alpine3.18
+    build: 
+      dockerfile: ./haproxy.Dockerfile
+    networks:
+      postgres-backend:
+        ipv4_address: 172.18.0.11
+    ports:
+      - "5432:5432"
+      - "5433:5433"
+    restart: unless-stopped
+
