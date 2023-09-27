@@ -11,6 +11,7 @@ docker build -t patroni:pg14 .
 docker exec  -it patroni_setup-consul-1 consul kv delete /service/cluster_1/initialize
 
 rm -rf /var/lib/docker/volumes/pgdata/_data/pgdata_n1/*
+rm -rf /var/lib/docker/volumes/pgdata/_data/pgdata_n2/*
 
 sleep 5
 

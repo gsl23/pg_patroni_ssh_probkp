@@ -13,4 +13,7 @@
  
  docker-compose -f dcompose-patroni.yml up -d patroni2 
  
-# docker-compose -f ./dcompose-patroni.yml  logs --follow
+ docker-compose -f dcompose-haproxy.yml up --detach
+ 
+ docker-compose -f ./dcompose-patroni.yml  logs --follow
+  

@@ -6,7 +6,7 @@
 
 docker-compose -f dcompose-patroni.yml down 
 
-docker build -t patroni:pg14 .
+# docker build  --network=host -t patroni:pg14 .
 
 # docker-compose -f dcompose-consul.yml up --detach 
 
